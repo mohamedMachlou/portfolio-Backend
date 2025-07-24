@@ -3,6 +3,7 @@ const db = require('./models')
 const cors = require('cors');
 const adminRoutes= require('./routes/adminRoutes')
 const certificateRoutes = require('./routes/certificateRoutes')
+const devopsotherRoutes = require('./routes/devops_otherRoutes')
 
 
 // Config App
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(cors())
 app.use('/', adminRoutes)
 app.use('/', certificateRoutes)
+app.use('/', devopsotherRoutes)
 
 
 const port = process.env.PORT || 3000
