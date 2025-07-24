@@ -178,12 +178,12 @@ exports.register = (firstName, lastName, jobTitle, experience, specialty, addres
 
 //Login  Function
 const PrivateKey = "This is private key : HGDR534EDY888I@@@@IOUYIO"
-exports.login= (email,password)=> {
+exports.login= (email, password)=> {
     return new Promise((resolve, reject) => {
 
         db.Admin.findOne({where: {email:email}}).then(admin => {
             if(!admin){
-                reject({msg: "invalid email and password"})
+                reject({msg: "invalid email "})
             }else{
                 bcrypt.compare(password, admin.password)
                 .then(samePassword => {
@@ -193,7 +193,7 @@ exports.login= (email,password)=> {
                        
                         resolve({token: token})
                     }else{
-                        reject({msg: "invalid email and password"})
+                        reject({msg: "invalid  password"})
                     }
                 })
             }

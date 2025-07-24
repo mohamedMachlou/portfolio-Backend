@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models'); 
 const multer = require('multer')
+const bcrypt = require('bcrypt'); 
 const adminController = require('../controllers/adminController');
 
 
@@ -56,7 +57,7 @@ router.post('/machlouadminreg', upload.single('photo'), (req, res) => {
 /////////// Login Admin
 ///////////////////////////////////////////////////////////////
 router.post('/machlouadminlog', (req, res) =>{
-    adminController.login(req.body.email,req.body.password)
+    adminController.login(req.body.email, req.body.password)
     .then((token)=> {res.status(200).json({token: token})})
     .catch((err)=>{res.status(400).json(err)})
 });
@@ -85,41 +86,50 @@ router.get('/machlouadmin/:id', (req, res, next) => {
 ///////////////////////////////////////////////////////////////
 /////////// Update Admin By ID
 ///////////////////////////////////////////////////////////////
+
+
 router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
-    try {
+  try {
     const updatedFields = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      jobTitle: req.body.jobTitle,
+      experience: req.body.experience,
+      specialty: req.body.specialty,
+      addresse: req.body.addresse,
+      email: req.body.email,
+      phone: req.body.phone,
+      freelance: req.body.freelance,
+      linkedin: req.body.linkedin,
+      github: req.body.github,
+      facebook: req.body.facebook,
+      instagram: req.body.instagram,
+      twitter: req.body.twitter,
+      downloadcv: req.body.downloadcv
+    };
 
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        jobTitle: req.body.jobTitle,
-        experience: req.body.experience,
-        specialty: req.body.specialty,
-        addresse: req.body.addresse,
-        email: req.body.email,
-        password: req.body.password,
-        phone: req.body.phone,
-        freelance: req.body.freelance,
-        linkedin: req.body.linkedin,
-        github: req.body.github,
-        facebook: req.body.facebook,
-        instagram: req.body.instagram,
-        twitter: req.body.twitter,
-        downloadcv: req.body.downloadcv
-        };
+    // Hash du mot de passe s’il est fourni
+    if (req.body.password) {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      updatedFields.password = hashedPassword;
+    }
 
-        updatedFields.photo = req.file.filename;
+    // Photo si elle est présente
+    if (req.file) {
+      updatedFields.photo = req.file.filename;
+    }
 
-        const result = await db.Medecin.update(updatedFields, {
-
-        where: { id: req.params.id }
+    const result = await db.Admin.update(updatedFields, {
+      where: { id: req.params.id }
     });
 
-        res.status(200).send(result);
-    } catch (err) {
-        res.status(400).send({ error: err.message || err });
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(400).send({ error: err.message || err });
   }
 });
 
+     
 
 ///////////////////////////////////////////////////////////////
 /////////// Delete Admin By ID
