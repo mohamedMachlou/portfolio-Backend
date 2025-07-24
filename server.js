@@ -1,7 +1,8 @@
 const express = require('express')
 const db = require('./models')
-const adminRoutes= require('./routes/adminRoutes')
 const cors = require('cors');
+const adminRoutes= require('./routes/adminRoutes')
+const certificateRoutes = require('./routes/certificateRoutes')
 
 
 // Config App
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors())
 app.use('/', adminRoutes)
+app.use('/', certificateRoutes)
 
 
 const port = process.env.PORT || 3000

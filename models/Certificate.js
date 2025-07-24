@@ -1,7 +1,7 @@
 const {v4: uuidv4} = require('uuid')
 
 module.exports = (sequelize, DataTypes) => {
-    const Certficate = sequelize.define('Certficate', {
+    const Certificate = sequelize.define('Certificate', {
         id: {
             type: DataTypes.STRING,
             defaultValue: uuidv4,
@@ -9,18 +9,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         photo: {
             type: DataTypes.STRING,
-            allowNull: false
+            
         },
         title: {
             type:DataTypes.STRING,
-            allowNull: true
+            allowNull: false
         },
         link: {
-            type: DataTypes.STRING,
-            allowNull: true
+            type: DataTypes.STRING, 
+            allowNull: false
         }
 
     })
 
-    return Certficate
+    return Certificate
 }
