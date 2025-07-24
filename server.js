@@ -4,6 +4,8 @@ const cors = require('cors');
 const adminRoutes= require('./routes/adminRoutes')
 const certificateRoutes = require('./routes/certificateRoutes')
 const devopsotherRoutes = require('./routes/devops_otherRoutes')
+const frameworkRoutes = require('./routes/frameworks_toolRoutes')
+const programming_language = require('./routes/programming_languageRoutes')
 
 
 // Config App
@@ -20,6 +22,8 @@ app.use(cors())
 app.use('/', adminRoutes)
 app.use('/', certificateRoutes)
 app.use('/', devopsotherRoutes)
+app.use('/', frameworkRoutes)
+app.use('/', programming_language)
 
 
 const port = process.env.PORT || 3000
