@@ -5,7 +5,8 @@ const adminRoutes= require('./routes/adminRoutes')
 const certificateRoutes = require('./routes/certificateRoutes')
 const devopsotherRoutes = require('./routes/devops_otherRoutes')
 const frameworkRoutes = require('./routes/frameworks_toolRoutes')
-const programming_language = require('./routes/programming_languageRoutes')
+const programming_languageRoutes = require('./routes/programming_languageRoutes')
+const projectRoutes = require('./routes/projectRoutes')
 
 
 // Config App
@@ -23,7 +24,8 @@ app.use('/', adminRoutes)
 app.use('/', certificateRoutes)
 app.use('/', devopsotherRoutes)
 app.use('/', frameworkRoutes)
-app.use('/', programming_language)
+app.use('/', programming_languageRoutes)
+app.use('/', projectRoutes)
 
 
 const port = process.env.PORT || 3000
