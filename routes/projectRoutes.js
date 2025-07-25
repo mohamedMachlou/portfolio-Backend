@@ -9,7 +9,7 @@ const ProjectController = require('../controllers/projectController');
 // Config multer pour upload fichier dans dossier /Projectphoto
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, './Projectphoto/'); // dossier d'Projectphoto
+    cb(null, './projectphoto/'); // dossier d'Projectphoto
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
