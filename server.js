@@ -7,11 +7,12 @@ const devopsotherRoutes = require('./routes/devops_otherRoutes')
 const frameworkRoutes = require('./routes/frameworks_toolRoutes')
 const programming_languageRoutes = require('./routes/programming_languageRoutes')
 const projectRoutes = require('./routes/projectRoutes')
+const serviceRoutes = require('./routes/serviceRoutes')
 
 
 // Config App
 const app = express()
-// require('dotenv').config();
+require('dotenv').config();
 
 
 // Middlewares
@@ -26,8 +27,9 @@ app.use('/', devopsotherRoutes)
 app.use('/', frameworkRoutes)
 app.use('/', programming_languageRoutes)
 app.use('/', projectRoutes)
+app.use('/', serviceRoutes)
 
-
+ 
 const port = process.env.PORT || 3000
 
 db.sequelize.sync().then(() => {
