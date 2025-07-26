@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models'); 
 const multer = require('multer')
+const fs = require('fs')
+const path = require('path')
 const certificateController = require('../controllers/certificateController');
 
 
@@ -73,26 +75,65 @@ router.get('/machloucertificate/:id', (req, res, next) => {
 /////////// Update Certificate By ID
 ///////////////////////////////////////////////////////////////
 
-
 router.patch('/machloucertificate/:id', upload.single('photo'), async (req, res) => {
   try {
+    const id = req.params.id;
+
+
+    // 1. Récupérer le Certificate actuel
+    const certificate = await db.Certificate.findOne({ where: { id } });
+
+    // 2. Si le Certificate n'existe pas → supprimer la photo nouvellement uploadée si présente
+    if (!certificate) {
+      if (req.file) {
+        const uploadedPath = path.join(__dirname, '../certificatephoto', req.file.filename);
+        if (fs.existsSync(uploadedPath)) {
+          fs.unlinkSync(uploadedPath);
+        }
+      }
+      return res.status(404).json({ error: 'Crtificate non trouvé' });
+    }
 
     const updatedFields = {
       title: req.body.title,
-      link: req.body.link,     
+      link: req.body.link,   
     };
 
-    // Photo si elle est présente
+    // 3. Supprimer l'ancienne photo si une nouvelle est uploadée
     if (req.file) {
+      if (certificate.photo) {
+        const oldIconPath = path.join(__dirname, '../certificatephoto', certificate.photo);
+        if (fs.existsSync(oldIconPath)) {
+          fs.unlinkSync(oldIconPath); // Supprime l'ancien fichier
+        }
+      }
+
+      // 4. Ajouter la nouvelle photo
       updatedFields.photo = req.file.filename;
     }
 
-    const result = await db.Certificate.update(updatedFields, {
-      where: { id: req.params.id }
+    // 5. Mise à jour
+    const [updated] = await db.Certificate.update(updatedFields, {
+      where: { id }
     });
 
-    res.status(200).send(result);
+    if (updated) {
+      res.status(200).json({ message: 'Certificate mis à jour avec succès' });
+    } else {
+      res.status(400).json({ error: 'Aucune mise à jour effectuée' });
+    }
+
   } catch (err) {
+    console.error(err);
+
+    // 6. Supprimer l'image si erreur inconnue ET upload existant
+    if (req.file) {
+      const errorPath = path.join(__dirname, '../certificatephoto', req.file.filename);
+      if (fs.existsSync(errorPath)) {
+        fs.unlinkSync(errorPath);
+      }
+    }
+
     res.status(400).send({ error: err.message || err });
   }
 });
