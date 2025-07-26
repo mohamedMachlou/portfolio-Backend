@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models'); 
 const multer = require('multer')
-const bcrypt = require('bcrypt'); 
+const fs = require('fs');
+const path = require('path');
+
 const adminController = require('../controllers/adminController');
 
 
@@ -87,9 +89,25 @@ router.get('/machlouadmin/:id', (req, res, next) => {
 /////////// Update Admin By ID
 ///////////////////////////////////////////////////////////////
 
-
 router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
   try {
+    const id = req.params.id;
+    console.log('req.body', req.body);
+
+    // 1. Récupérer le Admin actuel
+    const admin = await db.Admin.findOne({ where: { id } });
+
+    // 2. Si l Admin n'existe pas → supprimer la photo nouvellement uploadée si présente
+    if (!admin) {
+      if (req.file) {
+        const uploadedPath = path.join(__dirname, '../adminphoto', req.file.filename);
+        if (fs.existsSync(uploadedPath)) {
+          fs.unlinkSync(uploadedPath);
+        }
+      }
+      return res.status(404).json({ error: 'Admin non trouvé' });
+    }
+
     const updatedFields = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -98,6 +116,7 @@ router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
       specialty: req.body.specialty,
       addresse: req.body.addresse,
       email: req.body.email,
+      password: req.body.password,
       phone: req.body.phone,
       freelance: req.body.freelance,
       linkedin: req.body.linkedin,
@@ -108,28 +127,46 @@ router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
       downloadcv: req.body.downloadcv
     };
 
-    // Hash du mot de passe s’il est fourni
-    if (req.body.password) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      updatedFields.password = hashedPassword;
-    }
-
-    // Photo si elle est présente
+    // 3. Supprimer l'ancienne photo si une nouvelle est uploadée
     if (req.file) {
+      if (admin.photo) {
+        const oldIconPath = path.join(__dirname, '../adminphoto', admin.photo);
+        if (fs.existsSync(oldIconPath)) {
+          fs.unlinkSync(oldIconPath); // Supprime l'ancien fichier
+        }
+      }
+
+      // 4. Ajouter la nouvelle photo
       updatedFields.photo = req.file.filename;
     }
 
-    const result = await db.Admin.update(updatedFields, {
-      where: { id: req.params.id }
+    // 5. Mise à jour
+    const [updated] = await db.Admin.update(updatedFields, {
+      where: { id }
     });
 
-    res.status(200).send(result);
+    if (updated) {
+      res.status(200).json({ message: 'Admin mis à jour avec succès' });
+    } else {
+      res.status(400).json({ error: 'Aucune mise à jour effectuée' });
+    }
+
   } catch (err) {
+    console.error(err);
+
+    // 6. Supprimer l'image si erreur inconnue ET upload existant
+    if (req.file) {
+      const errorPath = path.join(__dirname, '../adminphoto', req.file.filename);
+      if (fs.existsSync(errorPath)) {
+        fs.unlinkSync(errorPath);
+      }
+    }
+
     res.status(400).send({ error: err.message || err });
   }
 });
 
-     
+
 
 ///////////////////////////////////////////////////////////////
 /////////// Delete Admin By ID
