@@ -25,9 +25,10 @@ const upload = multer({ storage });
 ///////////////////////////////////////////////////////////////
 ///////    Register New Admin
 ///////////////////////////////////////////////////////////////
+
 router.post('/machlouadminreg', upload.single('photo'), (req, res) => {
     adminController
-    .register(
+        .register(
             req.body.firstName,
             req.body.lastName,
             req.body.jobTitle,
@@ -43,16 +44,29 @@ router.post('/machlouadminreg', upload.single('photo'), (req, res) => {
             req.body.facebook,
             req.body.instagram,
             req.body.twitter,
-            req.file ? req.file.filename : null, 
+            req.file ? req.file.filename : null,
             req.body.downloadcv
         )
         .then((response) => {
-            res.status(200).json(response); 
+            res.status(200).json(response);
         })
         .catch((err) => {
-            res.status(400).json({ error:  err }); 
+            // Supprimer la photo si elle a été uploadée
+            if (req.file) {
+                const photoPath = path.join(__dirname, '../adminphoto', req.file.filename);
+                fs.unlink(photoPath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error('Erreur lors de la suppression de la photo :', unlinkErr);
+                    } else {
+                        console.log('Photo supprimée avec succès');
+                    }
+                });
+            }
+            res.status(400).json({ error: err });
         });
-}); 
+});
+
+
 
 
 ///////////////////////////////////////////////////////////////
@@ -78,7 +92,7 @@ router.get('/machlouadmin', (req, res) => {
 ///////////////////////////////////////////////////////////////
 /////////// Get Admin By ID
 ///////////////////////////////////////////////////////////////
-router.get('/machlouadmin/:id', (req, res, next) => {
+router.get('/machlouadmin/:id', (req, res) => {
     db.Admin.findOne({ where: { id: req.params.id } })
     .then((response) => res.status(200).send(response))
     .catch((err) => res.status(400).send(err));
