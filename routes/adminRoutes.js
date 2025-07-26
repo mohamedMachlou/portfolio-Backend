@@ -171,11 +171,34 @@ router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
 ///////////////////////////////////////////////////////////////
 /////////// Delete Admin By ID
 ///////////////////////////////////////////////////////////////
-router.delete('/machlouadmin/:id', (req, res, next) => {
-    db.Admin.destroy({ where: { id: req.params.id } })
-    .then((response) => res.status(200).send(response))
-    .catch((err) => res.status(400).send(err));
+
+router.delete('/machlouadmin/:id', async (req, res) => {
+  try {
+    // 1. Récupérer l'admin pour obtenir le nom de la photo
+    const admin = await db.Admin.findOne({ where: { id: req.params.id } });
+
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin non trouvé' });
+    }
+
+    // 2. Supprimer le fichier photo s’il existe
+    if (admin.photo) {
+      const photoPath = path.join(__dirname, '../adminphoto', admin.photo);
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath); // supprime le fichier
+      }
+    }
+
+    // 3. Supprimer l'admin de la base de données
+    await db.Admin.destroy({ where: { id: req.params.id } });
+
+    res.status(200).json({ message: 'Admin et photo supprimés avec succès' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Erreur lors de la suppression' });
+  }
 });
+
 
 
 module.exports = router;
