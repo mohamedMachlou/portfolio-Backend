@@ -33,7 +33,18 @@ router.post('/machloucertificatereg', upload.single('photo'), (req, res) => {
             res.status(200).json(response); 
         })
         .catch((err) => {
-            res.status(400).json({ error:  err }); 
+            // Supprimer la photo si elle a été uploadée
+                        if (req.file) {
+                            const photoPath = path.join(__dirname, '../certificatephoto', req.file.filename);
+                            fs.unlink(photoPath, (unlinkErr) => {
+                                if (unlinkErr) {
+                                    console.error('Erreur lors de la suppression de la photo :', unlinkErr);
+                                } else {
+                                    console.log('Photo supprimée avec succès');
+                                }
+                            });
+                        }
+                        res.status(400).json({ error: err });
         });
 }); 
 
