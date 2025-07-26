@@ -143,10 +143,32 @@ router.patch('/machloucertificate/:id', upload.single('photo'), async (req, res)
 ///////////////////////////////////////////////////////////////
 /////////// Delete Certificate By ID
 ///////////////////////////////////////////////////////////////
-router.delete('/machloucertificate/:id', (req, res, next) => {
-    db.Certificate.destroy({ where: { id: req.params.id } })
-    .then((response) => res.status(200).send(response))
-    .catch((err) => res.status(400).send(err));
+
+router.delete('/machloucertificate/:id', async (req, res) => {
+  try {
+    // 1. Récupérer le certificate pour obtenir le nom de la photo
+    const certificate = await db.Certificate.findOne({ where: { id: req.params.id } });
+
+    if (!certificate) {
+      return res.status(404).json({ error: 'Certificate non trouvé' });
+    }
+
+    // 2. Supprimer le fichier photo s’il existe
+    if (certificate.photo) {
+      const photoPath = path.join(__dirname, '../certificatephoto', certificate.photo);
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath); // supprime le fichier
+      }
+    }
+
+    // 3. Supprimer le certificate de la base de données
+    await db.Certificate.destroy({ where: { id: req.params.id } });
+
+    res.status(200).json({ message: 'Certificate et photo supprimés avec succès' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Erreur lors de la suppression' });
+  }
 });
 
 
