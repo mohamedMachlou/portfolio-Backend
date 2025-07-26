@@ -147,10 +147,31 @@ router.patch('/machlouproject/:id', upload.single('photo'), async (req, res) => 
 ///////////////////////////////////////////////////////////////
 /////////// Delete Project By ID
 ///////////////////////////////////////////////////////////////
-router.delete('/machlouproject/:id', (req, res, next) => {
-    db.Project.destroy({ where: { id: req.params.id } })
-    .then((response) => res.status(200).send(response))
-    .catch((err) => res.status(400).send(err));
+router.delete('/machlouproject/:id', async (req, res) => {
+  try {
+    // 1. Récupérer le Project pour obtenir le nom de la photo
+    const project = await db.Project.findOne({ where: { id: req.params.id } });
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project non trouvé' });
+    }
+
+    // 2. Supprimer le fichier photo s’il existe
+    if (project.photo) {
+      const photoPath = path.join(__dirname, '../projectphoto', project.photo);
+      if (fs.existsSync(photoPath)) {
+        fs.unlinkSync(photoPath); // supprime le fichier
+      }
+    }
+
+    // 3. Supprimer le Project de la base de données
+    await db.Project.destroy({ where: { id: req.params.id } });
+
+    res.status(200).json({ message: 'Project et photo supprimés avec succès' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message || 'Erreur lors de la suppression' });
+  }
 });
 
 
