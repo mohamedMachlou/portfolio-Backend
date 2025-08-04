@@ -31,6 +31,7 @@ router.post('/machlouadminreg', upload.single('photo'), (req, res) => {
         .register(
             req.body.firstName,
             req.body.lastName,
+            req.body.description,
             req.body.jobTitle,
             req.body.experience,
             req.body.specialty,
@@ -125,6 +126,7 @@ router.patch('/machlouadmin/:id', upload.single('photo'), async (req, res) => {
     const updatedFields = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
+      description: req.body.description,
       jobTitle: req.body.jobTitle,
       experience: req.body.experience,
       specialty: req.body.specialty,

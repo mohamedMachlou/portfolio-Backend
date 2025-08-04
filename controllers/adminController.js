@@ -18,6 +18,12 @@ const schemaValidation= Joi.object({
     .max(20)
     .required(),
     
+    description:  Joi.string()
+    .pattern(new RegExp("^[\\w\\s.,'\"()\\-:;!?&]+$"))
+    .min(3)
+    .max(255)
+    .required(),
+
     jobTitle:  Joi.string()
     .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
     .min(3)
@@ -31,7 +37,7 @@ const schemaValidation= Joi.object({
     .required(),
 
     specialty:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^[a-zA-Z0-9/]+( [a-zA-Z0-9/]+)*$'))
     .min(3)
     .max(30)
     .required(),
@@ -56,36 +62,36 @@ const schemaValidation= Joi.object({
     
 
     linkedin:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
 
     github:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
 
     facebook:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
 
     instagram:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
 
     twitter:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
     downloadcv:  Joi.string()
-    .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+    .pattern(new RegExp('^(https?:\\/\\/)?([\\w-]+\\.)+[\\w-]{2,}(\\/\\S*)?$'))
     .min(3)
     .max(255),
     
@@ -100,12 +106,13 @@ const schemaValidation= Joi.object({
 
 
 // Admin Register Function
-exports.register = (firstName, lastName, jobTitle, experience, specialty, addresse, email, password, phone,freelance, linkedin, github, facebook, instagram, twitter, photo, downloadcv) => {
+exports.register = (firstName, lastName,description, jobTitle, experience, specialty, addresse, email, password, phone,freelance, linkedin, github, facebook, instagram, twitter, photo, downloadcv) => {
     return new Promise((resolve, reject) => {
         // Validate Data
         const validation = schemaValidation.validate({
            firstName, 
            lastName, 
+           description,
            jobTitle, 
            experience, 
            specialty, 
@@ -143,7 +150,8 @@ exports.register = (firstName, lastName, jobTitle, experience, specialty, addres
 
                             return db.Admin.create({
                                     firstName, 
-                                    lastName, 
+                                    lastName,
+                                    description, 
                                     jobTitle, 
                                     experience, 
                                     specialty, 
