@@ -10,7 +10,7 @@ const schemaValidation= Joi.object({
     .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
     .min(3)
     .max(30)
-    .required(),
+    .required(), 
 
     lastName:  Joi.string()
     .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
@@ -23,11 +23,17 @@ const schemaValidation= Joi.object({
     .min(3)
     .max(255)
     .required(),
+    
+    diplome:  Joi.string()
+    .pattern(new RegExp("^[\\w\\s.,'\"()\\-:;!?&]+$"))
+    .min(3)
+    .max(255)
+    .required(),
 
     jobTitle:  Joi.string()
     .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
     .min(3)
-    .max(20)
+    .max(20) 
     .required(),
 
     experience:  Joi.string()
@@ -106,13 +112,14 @@ const schemaValidation= Joi.object({
 
 
 // Admin Register Function
-exports.register = (firstName, lastName,description, jobTitle, experience, specialty, addresse, email, password, phone,freelance, linkedin, github, facebook, instagram, twitter, photo, downloadcv) => {
+exports.register = (firstName, lastName,description, diplome, jobTitle, experience, specialty, addresse, email, password, phone,freelance, linkedin, github, facebook, instagram, twitter, photo, downloadcv) => {
     return new Promise((resolve, reject) => {
         // Validate Data
         const validation = schemaValidation.validate({
            firstName, 
            lastName, 
            description,
+           diplome,
            jobTitle, 
            experience, 
            specialty, 
@@ -152,6 +159,7 @@ exports.register = (firstName, lastName,description, jobTitle, experience, speci
                                     firstName, 
                                     lastName,
                                     description, 
+                                    diplome,
                                     jobTitle, 
                                     experience, 
                                     specialty, 

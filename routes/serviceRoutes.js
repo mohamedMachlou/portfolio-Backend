@@ -49,7 +49,7 @@ router.post('/machlouservicereg', upload.single('icon'), (req, res) => {
                                     res.status(400).json({ error: err });
         });
 }); 
-
+ 
 
 ///////////////////////////////////////////////////////////////
 /////////// Get All Services

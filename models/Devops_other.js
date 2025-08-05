@@ -8,7 +8,7 @@ module.exports =  (sequelize, DataTypes) =>  {
              primaryKey: true 
            },
         title: {type: DataTypes.STRING, allowNull: false},
-        skill: {type: DataTypes.STRING, allowNull: false},
+        skill: {type: DataTypes.STRING, allowNull: false}, 
         skill_prc: {type: DataTypes.INTEGER, allowNull: false},
     
     })

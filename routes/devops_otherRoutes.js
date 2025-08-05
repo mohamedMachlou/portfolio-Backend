@@ -59,7 +59,7 @@ router.patch('/machloudevops/:id', async (req, res) => {
 
     const updatedFields = {
       title: req.body.title,
-      skill: req.body.skill,     
+      skill: req.body.skill,      
       skill_prc: req.body.skill_prc,     
     };
 

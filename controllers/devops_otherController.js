@@ -3,13 +3,13 @@ const db = require('../models');
 
 const schemaValidation = Joi.object({
     title: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+        .pattern(new RegExp('^[a-zA-Z0-9&]+( [a-zA-Z0-9&]+)*$'))
         .min(3)
         .max(255)
         .required(),
         
     skill: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$'))
+        .pattern(new RegExp('^[a-zA-Z0-9&]+( [a-zA-Z0-9&]+)*$'))
         .min(3)
         .max(255)
         .required(),
@@ -31,8 +31,10 @@ exports.register = async (title, skill, skill_prc) => {
     
     if (error) {
         throw new Error(error.details.map((detail) => detail.message).join(", "));
+        
+        
     }
-    
+     
     // Création
     const newDevops_other = await db.Devops_other.create({title, skill, skill_prc});
     console.log('newDevops_other  : ',newDevops_other)
