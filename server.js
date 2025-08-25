@@ -8,6 +8,8 @@ const frameworkRoutes = require('./routes/frameworks_toolRoutes')
 const programming_languageRoutes = require('./routes/programming_languageRoutes')
 const projectRoutes = require('./routes/projectRoutes')
 const serviceRoutes = require('./routes/serviceRoutes')
+const path = require('path')
+
 
 
 // Config App
@@ -27,10 +29,32 @@ app.use('/', devopsotherRoutes)
 app.use('/', frameworkRoutes)
 app.use('/', programming_languageRoutes)
 app.use('/', projectRoutes)
-app.use('/', serviceRoutes)
+app.use('/', serviceRoutes)  
+
+//Sert les images depuis uploads/adminphoto sous /adminphoto
+app.use('/adminphoto', express.static(path.join(__dirname, 'uploads/adminphoto')));
+
+//Sert les images depuis uploads/projectphoto sous /projectphoto
+app.use('/projectphoto', express.static(path.join(__dirname, 'uploads/projectphoto')));
+
+//Sert les images depuis uploads/certificatephoto sous /certificatephoto
+app.use('/certificatephoto', express.static(path.join(__dirname, 'uploads/certificatephoto')));
+
+//Sert les images depuis uploads/serviceicon sous /serviceicon
+app.use('/serviceicon', express.static(path.join(__dirname, 'uploads/serviceicon')));
+
+
+// CORS Middleware
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+    res.setHeader('Access-Control-Allow-Methods', '*'); // Allowed HTTP methods : GET, POST, PUT, PATCH, DELETE, OPTIONS
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allowed headers
+    res.setHeader('Access-Control-Allow-Credentials', true); // Allow cookies (optional)
+    next();
+});
 
  
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000 
 
 db.sequelize.sync().then(() => {
     app.listen(port,  () => console.log(`server is loading on ${port} ...`))

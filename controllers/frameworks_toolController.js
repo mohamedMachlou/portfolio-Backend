@@ -32,12 +32,14 @@ exports.register = async (title, skill, skill_prc) => {
     if (error) {
         throw new Error(error.details.map((detail) => detail.message).join(", "));
     }
+
+    const skill_prc_width = skill_prc*2.8
     
     // Création
-    const newFrameworks_tool = await db.Frameworks_tool.create({title, skill, skill_prc});
+    const newFrameworks_tool = await db.Frameworks_tool.create({title, skill, skill_prc, skill_prc_width});
     console.log('newFrameworks_tool  : ',newFrameworks_tool)
     
-        return newFrameworks_tool;
+        return newFrameworks_tool; 
     };
-    
+     
   

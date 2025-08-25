@@ -14,7 +14,7 @@ const schemaValidation = Joi.object({
         .required()
 });
 
-// Project Register Function
+// Project Register Function 
 exports.register = async (title, link, photo) => {
     // Validation
     const { error } = schemaValidation.validate({ title, link });

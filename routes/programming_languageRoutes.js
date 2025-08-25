@@ -14,10 +14,10 @@ router.post('/machlouproglanguagereg', (req, res) => {
     console.log('req.body:', req.body);
     
     programming_languageController
-    .register(
+    .register( 
             req.body.title,
             req.body.skill,
-            req.body.skill_prc
+            req.body.skill_prc,
         )
         .then((response) => {
             res.status(200).json(response); 
@@ -61,6 +61,7 @@ router.patch('/machlouprogramming_language/:id', async (req, res) => {
       title: req.body.title,
       skill: req.body.skill,     
       skill_prc: req.body.skill_prc,     
+      skill_prc_width: req.body.skill_prc_width,     
     };
 
     const result = await db.Programming_language.update(updatedFields, {
